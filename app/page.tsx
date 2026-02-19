@@ -75,7 +75,7 @@ export default function Home() {
       const lineHeight = primaryFontSize * 1.5;
 
       // Logo
-      const logoSize = 100 * scale;
+      const logoSize = 120 * scale;
 
       // Powered by
       const poweredByText = "Powered by Bengkel Watermark";
