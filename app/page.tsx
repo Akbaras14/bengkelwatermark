@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import NextImage from "next/image";
 
 export default function Home() {
   const [mainImage, setMainImage] = useState<string | null>(null);
@@ -8,16 +7,12 @@ export default function Home() {
   const [jobDescription, setJobDescription] = useState("");
   const [officerName, setOfficerName] = useState("");
   const [location, setLocation] = useState("");
-  const [executionDate, setExecutionDate] = useState(""); // New state variable
+  const [executionDate, setExecutionDate] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isLoading, setIsLoading] = useState(true); // New state for loading screen
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate a loading delay
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 6000); // 2 seconds loading screen
-
+    const timer = setTimeout(() => setIsLoading(false), 2500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -25,22 +20,22 @@ export default function Home() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setMainImage(e.target?.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => setMainImage(e.target?.result as string);
+    reader.readAsDataURL(file);
   };
 
   const handleLogoImageUpload = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setLogoImage(e.target?.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => setLogoImage(e.target?.result as string);
+    reader.readAsDataURL(file);
   };
 
   const drawWatermark = () => {
@@ -51,37 +46,33 @@ export default function Home() {
     if (!ctx) return;
 
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = mainImage;
 
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0);
 
-      // ==============================
-      // MODERN WATERMARK CONFIG
-      // ==============================
+      /* ==============================
+         PROFESSIONAL SCALING SYSTEM
+      ============================== */
       const referenceSize = 1000;
       const scale = Math.min(img.width, img.height) / referenceSize;
 
-      // Padding & Layout
       const padding = 40 * scale;
-      const boxPadding = 15 * scale;
-      const borderRadius = 20 * scale;
+      const boxPadding = 20 * scale;
+      const borderRadius = 22 * scale;
 
-      // Font
-      const primaryFontSize = 24 * scale;
+      const primaryFontSize = 26 * scale;
       const lineHeight = primaryFontSize * 1.5;
 
-      // Logo
       const logoSize = 120 * scale;
 
-      // Powered by
       const poweredByText = "Powered by Bengkel Watermark";
-      const poweredByFontSize = primaryFontSize * 0.7 * scale;
-
-      ctx.font = `bold ${primaryFontSize}px 'Segoe UI', sans-serif`;
+      const poweredByFontSize = primaryFontSize * 0.7;
 
       const lines: string[] = [];
       if (jobDescription) lines.push(`Jobdesk: ${jobDescription}`);
@@ -89,50 +80,42 @@ export default function Home() {
       if (location) lines.push(`Lokasi: ${location}`);
       if (executionDate)
         lines.push(
-          `Tanggal Pengerjaan: ${new Date(executionDate).toLocaleDateString(
-            "id-ID",
-            {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            }
-          )}`
-        ); // New line for execution date
+          `Tanggal: ${new Date(executionDate).toLocaleDateString("id-ID")}`
+        );
 
       if (lines.length === 0) return;
 
-      // ==============================
-      // CALCULATE TEXT WIDTH
-      // ==============================
+      ctx.font = `bold ${primaryFontSize}px 'Segoe UI', sans-serif`;
+
       let maxWidth = 0;
       lines.forEach((line) => {
         const width = ctx.measureText(line).width;
         if (width > maxWidth) maxWidth = width;
       });
 
-      ctx.font = `bold ${poweredByFontSize}px 'Segoe UI', sans-serif`; // Temporarily set font to measure poweredByText
-      const poweredByWidth = ctx.measureText(poweredByText).width;
-      ctx.font = `bold ${primaryFontSize}px 'Segoe UI', sans-serif`; // Reset font
+      ctx.font = `bold ${poweredByFontSize}px 'Segoe UI', sans-serif`;
+      const poweredWidth = ctx.measureText(poweredByText).width;
 
-      const effectiveMaxWidth = Math.max(maxWidth, poweredByWidth);
+      const contentWidth = Math.max(maxWidth, poweredWidth);
 
       const boxWidth =
-        effectiveMaxWidth + boxPadding * 2 + (logoImage ? logoSize + 25 : 0);
+        contentWidth + boxPadding * 2 + (logoImage ? logoSize + 25 * scale : 0);
 
       const boxHeight =
         lines.length * lineHeight +
         boxPadding * 2 +
-        (poweredByWidth > 0 ? poweredByFontSize + 10 : 0); // Add space for powered by line
+        poweredByFontSize +
+        20 * scale;
 
       const boxX = padding;
       const boxY = canvas.height - boxHeight - padding;
 
-      // ==============================
-      // DRAW ROUNDED GLASS BOX
-      // ==============================
-      ctx.shadowColor = "rgba(0,0,0,0.75)";
+      /* ==============================
+         GLASS BOX
+      ============================== */
+      ctx.shadowColor = "rgba(0,0,0,0.7)";
       ctx.shadowBlur = 30 * scale;
-      ctx.shadowOffsetY = 2 * scale;
+      ctx.shadowOffsetY = 4 * scale;
 
       ctx.beginPath();
       ctx.moveTo(boxX + borderRadius, boxY);
@@ -161,58 +144,60 @@ export default function Home() {
       ctx.quadraticCurveTo(boxX, boxY, boxX + borderRadius, boxY);
       ctx.closePath();
 
+      const gradient = ctx.createLinearGradient(
+        boxX,
+        boxY,
+        boxX + boxWidth,
+        boxY + boxHeight
+      );
+      gradient.addColorStop(0, "rgba(0,0,0,0.55)");
+      gradient.addColorStop(1, "rgba(0,0,0,0.35)");
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
       ctx.shadowBlur = 0;
 
-      // ==============================
-      // DRAW TEXT AND LOGO
-      // ==============================
-      const drawAllElements = (currentTextStartX: number) => {
-        // Draw main text lines
-        ctx.fillStyle = "white";
+      const drawContent = (textStartX: number) => {
+        ctx.fillStyle = "#ffffff";
         ctx.font = `bold ${primaryFontSize}px 'Segoe UI', sans-serif`;
 
         lines.forEach((line, index) => {
           ctx.fillText(
             line,
-            currentTextStartX,
-            boxY +
-              boxPadding +
-              index * lineHeight +
-              lineHeight / 2 +
-              primaryFontSize / 2
+            textStartX,
+            boxY + boxPadding + index * lineHeight + primaryFontSize
           );
         });
 
-        // GOLD ACCENT LINE
         const accentHeight = 3 * scale;
-        const accentSpacing = 10 * scale;
-
-        const accentLineY =
-          boxY + boxHeight - accentHeight - poweredByFontSize - accentSpacing;
+        const accentY =
+          boxY + boxPadding + lines.length * lineHeight + 5 * scale;
 
         ctx.fillStyle = "#FF2D00";
-
         ctx.fillRect(
-          currentTextStartX - boxPadding + 5 * scale,
-          accentLineY,
-          boxWidth - (currentTextStartX - boxPadding + 5 * scale - boxX),
+          textStartX - boxPadding,
+          accentY,
+          contentWidth + boxPadding,
           accentHeight
         );
 
-        // Draw "Powered by" text below the accent line
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "#ffffff";
         ctx.font = `bold ${poweredByFontSize}px 'Segoe UI', sans-serif`;
-        const poweredByY = accentLineY + 6 + 5 + poweredByFontSize / 2;
-        ctx.fillText(poweredByText, currentTextStartX, poweredByY);
+        ctx.fillText(
+          poweredByText,
+          textStartX,
+          accentY + poweredByFontSize + 10 * scale
+        );
       };
 
-      // Handle logo loading
       if (logoImage) {
         const logo = new Image();
+        logo.crossOrigin = "anonymous";
         logo.src = logoImage;
 
         logo.onload = () => {
-          const textStartX = boxX + boxPadding + logoSize + 25;
+          const textStartX = boxX + boxPadding + logoSize + 25 * scale;
 
           ctx.drawImage(
             logo,
@@ -222,14 +207,12 @@ export default function Home() {
             logoSize
           );
 
-          drawAllElements(textStartX);
+          drawContent(textStartX);
         };
 
-        logo.onerror = () => {
-          drawAllElements(boxX + boxPadding);
-        };
+        logo.onerror = () => drawContent(boxX + boxPadding);
       } else {
-        drawAllElements(boxX + boxPadding);
+        drawContent(boxX + boxPadding);
       }
     };
   };
@@ -247,13 +230,12 @@ export default function Home() {
 
   const handleDownload = () => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      const image = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = image;
-      link.download = "bengkel_watermark.png";
-      link.click();
-    }
+    if (!canvas) return;
+
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "bengkel_watermark.png";
+    link.click();
   };
 
   // Conditional rendering for loading screen
