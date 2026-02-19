@@ -62,8 +62,8 @@ export default function Home() {
       // ==============================
       // MODERN WATERMARK CONFIG
       // ==============================
-      const baseWidth = 1200; // patokan desain awal kamu
-      const scale = canvas.width / baseWidth;
+      const referenceSize = 1000;
+      const scale = Math.min(img.width, img.height) / referenceSize;
 
       // Padding & Layout
       const padding = 40 * scale;
