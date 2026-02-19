@@ -62,13 +62,22 @@ export default function Home() {
       // ==============================
       // MODERN WATERMARK CONFIG
       // ==============================
-      const padding = 40;
-      const boxPadding = 15;
-      const primaryFontSize = 24;
-      const lineHeight = primaryFontSize * 1.5;
-      const borderRadius = 20;
-      const logoSize = 100; // Adjusted logoSize
+      const baseWidth = 1200; // patokan desain awal kamu
+      const scale = canvas.width / baseWidth;
 
+      // Padding & Layout
+      const padding = 40 * scale;
+      const boxPadding = 15 * scale;
+      const borderRadius = 20 * scale;
+
+      // Font
+      const primaryFontSize = 24 * scale;
+      const lineHeight = primaryFontSize * 1.5;
+
+      // Logo
+      const logoSize = 100 * scale;
+
+      // Powered by
       const poweredByText = "Powered by Bengkel Watermark";
       const poweredByFontSize = primaryFontSize * 0.7;
 
@@ -175,14 +184,19 @@ export default function Home() {
         });
 
         // GOLD ACCENT LINE
-        const accentLineY = boxY + boxHeight - 3 - poweredByFontSize - 10;
+        const accentHeight = 3 * scale;
+        const accentSpacing = 10 * scale;
+
+        const accentLineY =
+          boxY + boxHeight - accentHeight - poweredByFontSize - accentSpacing;
 
         ctx.fillStyle = "#FF2D00";
+
         ctx.fillRect(
-          currentTextStartX - boxPadding + 5,
+          currentTextStartX - boxPadding + 5 * scale,
           accentLineY,
-          boxWidth - (currentTextStartX - boxPadding + 5 - boxX),
-          3
+          boxWidth - (currentTextStartX - boxPadding + 5 * scale - boxX),
+          accentHeight
         );
 
         // Draw "Powered by" text below the accent line
