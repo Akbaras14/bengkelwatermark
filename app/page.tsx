@@ -79,7 +79,7 @@ export default function Home() {
 
       // Powered by
       const poweredByText = "Powered by Bengkel Watermark";
-      const poweredByFontSize = primaryFontSize * 0.7;
+      const poweredByFontSize = primaryFontSize * 0.7 * scale;
 
       ctx.font = `bold ${primaryFontSize}px 'Segoe UI', sans-serif`;
 
@@ -131,8 +131,8 @@ export default function Home() {
       // DRAW ROUNDED GLASS BOX
       // ==============================
       ctx.shadowColor = "rgba(0,0,0,0.75)";
-      ctx.shadowBlur = 30;
-      ctx.shadowOffsetY = 3;
+      ctx.shadowBlur = 30 * scale;
+      ctx.shadowOffsetY = 3 * scale;
 
       ctx.beginPath();
       ctx.moveTo(boxX + borderRadius, boxY);
