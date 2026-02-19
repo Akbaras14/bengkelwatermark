@@ -132,7 +132,7 @@ export default function Home() {
       // ==============================
       ctx.shadowColor = "rgba(0,0,0,0.75)";
       ctx.shadowBlur = 30 * scale;
-      ctx.shadowOffsetY = 3 * scale;
+      ctx.shadowOffsetY = 2 * scale;
 
       ctx.beginPath();
       ctx.moveTo(boxX + borderRadius, boxY);
